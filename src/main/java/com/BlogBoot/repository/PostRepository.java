@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -36,4 +37,8 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
     @Query(nativeQuery = true, value = "SELECT * FROM posts WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
             "AND time <= NOW() AND text LIKE %:query% OR title LIKE %:query%")
     List<Post> findPostByQuery(String query, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM posts WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
+            "AND time <= :endDate AND time >= :startDate")
+    List<Post> findPostByDate(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

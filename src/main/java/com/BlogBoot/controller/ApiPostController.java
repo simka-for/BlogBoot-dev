@@ -37,7 +37,14 @@ public class ApiPostController {
         return postService.searchPost(offset, limit, query);
     }
 
+    @GetMapping("/byDate")
+    @ResponseStatus(HttpStatus.OK)
+    public PostResponseBody postByDate(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "date") String date){
 
-
+        return postService.postByDate(offset, limit, date);
+    }
 
 }

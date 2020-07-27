@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PostBody {
 
     private Integer id;
-    private String time;
+    private Long time;
     private UserBody userBody;
     private String title;
     private String announce;

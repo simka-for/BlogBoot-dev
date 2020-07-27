@@ -1,6 +1,7 @@
 package com.BlogBoot.service;
 
 import com.BlogBoot.responses.InitApiResponse;
+import com.BlogBoot.responses.SettingResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,5 +16,13 @@ public class GeneralService {
                 "simka.for@gmail.com",
                 "Обрезумов Серафим",
                 "2020");
+    }
+    public SettingResponse generalSettingData(){
+
+        return new SettingResponse(
+                true,
+                false,
+                true
+        );
     }
 }

@@ -1,5 +1,6 @@
 package com.BlogBoot.service;
 
+import com.BlogBoot.converter.DateConverter;
 import com.BlogBoot.dto.UserBody;
 import com.BlogBoot.model.Post;
 import com.BlogBoot.model.enums.PostSort;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort.Direction;
 
-import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostVoteRepository postVoteRepository;
     private final PostCommentsRepository postCommentsRepository;
+
+    private DateConverter dateConverter;
 
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository, PostVoteRepository postVoteRepository, PostCommentsRepository postCommentsRepository) {
@@ -89,6 +92,21 @@ public class PostService {
         }
     }
 
+    public PostResponseBody postByDate(int offset, int limit, String date){
+
+        LocalDateTime startDate = LocalDate.parse(date).atStartOfDay();
+        LocalDateTime endDate = startDate.plusDays(1);
+
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+
+        List<Post> posts = postRepository.findPostByDate(startDate, endDate, pageable);
+
+        return PostResponseBody.builder()
+                .count(posts.size())
+                .posts(postConvert(posts))
+                .build();
+    }
+
     private List<PostBody> postConvert(List<Post> posts) {
 
         List<PostBody> finalPost = new ArrayList<>();
@@ -112,7 +130,7 @@ public class PostService {
 
             PostBody postBody = PostBody.builder()
                     .id(post.getId())
-                    .time(dateConvert(post.getTime()))
+                    .time(dateConverter.asEpochMillis(post.getTime()))
                     .userBody(userBody)
                     .title(post.getTitle())
                     .announce(announce)
@@ -127,25 +145,5 @@ public class PostService {
         return finalPost;
     }
 
-    public String dateConvert(LocalDateTime date) {
 
-        DateTimeFormatter standardFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        DateTimeFormatter todayFormatter = DateTimeFormatter.ofPattern("Сегодня, HH:mm");
-        DateTimeFormatter yesterdayFormatter = DateTimeFormatter.ofPattern("Вчера, HH:mm");
-
-        LocalDateTime nowTime = LocalDateTime.now();
-
-        final long today = 1440;
-        final long yesterday = 2880;
-
-        if (Duration.between(date, nowTime).toMinutes() <= today) {
-            return date.format(todayFormatter);
-
-        } else if (Duration.between(date, nowTime).toMinutes() <= yesterday) {
-            return date.format(yesterdayFormatter);
-
-        } else {
-            return date.format(standardFormatter);
-        }
-    }
 }
