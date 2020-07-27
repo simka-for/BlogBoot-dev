@@ -19,7 +19,6 @@ import org.springframework.data.domain.Sort.Direction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +31,6 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostVoteRepository postVoteRepository;
     private final PostCommentsRepository postCommentsRepository;
-
-    private DateConverter dateConverter;
 
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository, PostVoteRepository postVoteRepository, PostCommentsRepository postCommentsRepository) {
@@ -92,6 +89,7 @@ public class PostService {
         }
     }
 
+    @Transactional(readOnly = true)
     public PostResponseBody postByDate(int offset, int limit, String date){
 
         LocalDateTime startDate = LocalDate.parse(date).atStartOfDay();
@@ -115,7 +113,7 @@ public class PostService {
         for (Post post : posts) {
             int userId = post.getUser().getId();
 
-            String userName = userRepository.findNameById(userId);
+            String userName = userRepository.findById(userId).get().getName();
             int postId = post.getId();
             String announce;
 
@@ -130,7 +128,7 @@ public class PostService {
 
             PostBody postBody = PostBody.builder()
                     .id(post.getId())
-                    .time(dateConverter.asEpochMillis(post.getTime()))
+                    .time(DateConverter.asEpochMillis(post.getTime()))
                     .userBody(userBody)
                     .title(post.getTitle())
                     .announce(announce)
