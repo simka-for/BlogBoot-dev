@@ -30,10 +30,6 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
             + "AND moderator_status = 'ACCEPTED' AND time <= NOW()")
     List<Post> suitablePosts(Pageable pageable);
 
-    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM posts WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
-            "AND text LIKE %:query%")
-    int findCountSearchPost(String query);
-
     @Query(nativeQuery = true, value = "SELECT * FROM posts WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
             "AND time <= NOW() AND text LIKE %:query% OR title LIKE %:query%")
     List<Post> findPostByQuery(String query, Pageable pageable);

@@ -74,12 +74,11 @@ public class PostService {
 
         if (query.equals("")){
             return getPosts(offset,limit, "BEST");
-        }else {
-
-            int count = postRepository.findCountSearchPost(query);
+        } else {
             Pageable pageable = PageRequest.of(offset / limit, limit);
 
             List<Post> searchPost = postRepository.findPostByQuery(query, pageable);
+            int count = searchPost.size();
 
             return PostResponseBody.builder()
                     .count(count)
