@@ -105,6 +105,19 @@ public class PostService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public PostResponseBody postByTag(int offset, int limit, String tag){
+
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+
+        List<Post> posts = postRepository.findPostByTag(tag, pageable);
+
+        return PostResponseBody.builder()
+                .count(posts.size())
+                .posts(postConvert(posts))
+                .build();
+    }
+
     private List<PostBody> postConvert(List<Post> posts) {
 
         List<PostBody> finalPost = new ArrayList<>();

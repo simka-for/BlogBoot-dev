@@ -41,4 +41,11 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
     @Query(nativeQuery = true, value = "SELECT * FROM posts WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
             "AND time <= :endDate AND time >= :startDate")
     List<Post> findPostByDate(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "SELECT p.* FROM posts p" +
+            " JOIN tag2post t2p ON t2p.post_id = p.id" +
+            " JOIN tag t ON t.id = t2p.tag_id" +
+            " WHERE is_active = 1 AND moderator_status = 'ACCEPTED'" +
+            "AND t.name = :tag")
+    List<Post> findPostByTag(String tag, Pageable pageable);
 }

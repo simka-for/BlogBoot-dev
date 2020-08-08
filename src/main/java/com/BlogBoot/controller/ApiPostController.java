@@ -39,12 +39,22 @@ public class ApiPostController {
 
     @GetMapping("/byDate")
     @ResponseStatus(HttpStatus.OK)
-    public PostResponseBody postByDate(
+    public PostResponseBody getPostByDate(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
             @RequestParam(value = "date") String date){
 
         return postService.postByDate(offset, limit, date);
+    }
+
+    @GetMapping("/byTag")
+    @ResponseStatus(HttpStatus.OK)
+    public PostResponseBody getPostByTag(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "tag") String tag){
+
+        return postService.postByTag(offset, limit, tag);
     }
 
 }
